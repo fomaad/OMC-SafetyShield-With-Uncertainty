@@ -1,6 +1,6 @@
-## Ensuring Decision-making Safety in Autonomous Driving Through Online Model Checking
+## Robust Decision-Making Safety for Autonomous Driving under Observation Uncertainty via Online Model Checking
 
-A safety shield for AI-driven Autonomous Driving (AD) based on Online Model checking is developed.
+A safety shield for AI-driven Autonomous Driving (AD) with Observation (Perception) Uncertainty is developed based on Online Model checking.
 
 In this repository, you can find:
 

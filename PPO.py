@@ -12,8 +12,9 @@ from highway_env.envs.common.abstract import AbstractEnv
 from highway_env.road.lane import AbstractLane
 import utils
 
-log_path = "highway_ppo"
-model_path = os.path.join(log_path, "model")
+model_dir = "RL-model/highway/ppo"
+model_path = os.path.join(model_dir, "model")
+log_path = os.path.join(model_dir, "log")
 
 env_config = {
     "action": {
@@ -36,7 +37,7 @@ def train():
     model = PPO(
         "MlpPolicy",
         env,
-        policy_kwargs=dict(net_arch=[dict(pi=[256, 256], vf=[256, 256])]),
+        policy_kwargs=dict(net_arch=dict(pi=[256, 256], vf=[256, 256])),
         n_steps=batch_size * 12 // n_cpu,
         batch_size=batch_size,
         n_epochs=10,
@@ -50,8 +51,8 @@ def train():
     model.learn(total_timesteps=int(400_000), progress_bar=True)
     model.save(model_path)
 
-RECORD_TRAJECTORIES = True
-SAFETY_SHIELD_ENABLE = True
+RECORD_TRAJECTORIES = False
+SAFETY_SHIELD_ENABLE = False
 trajectory_file_name = "trajectories.yaml"
 
 if SAFETY_SHIELD_ENABLE:
@@ -69,7 +70,7 @@ def test():
         "features": ["presence", "x", "y", "vx", "vy", "heading"],
     }
     env_config["simulation_frequency"] = 15
-    env.configure(env_config)
+    env.unwrapped.configure(env_config)
     env.reset()
 
     env.training = False  # Disable normalization updates
@@ -96,7 +97,7 @@ def test():
 
 
 if __name__ == "__main__":
-    to_train = False
+    to_train = True
     if to_train:
         train()
 

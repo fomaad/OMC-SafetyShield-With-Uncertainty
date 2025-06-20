@@ -11,8 +11,9 @@ from highway_env.road.lane import AbstractLane
 
 import highway_env
 
-log_path = "highway_dqn"
-model_path = os.path.join(log_path, "model")
+model_dir = "RL-model/highway/dqn"
+model_path = os.path.join(model_dir, "model")
+log_path = os.path.join(model_dir, "log")
 
 env_config = {
     "action": {
@@ -27,8 +28,7 @@ env_config = {
 
 def train():
     # Create and configure the environment
-    env = gym.make("highway-fast-v0", render_mode='human')
-    env.configure(env_config)
+    env = gym.make("highway-fast-v0", render_mode='human', config=env_config)
     env.reset()
 
     model = DQN('MlpPolicy', env,
@@ -58,8 +58,8 @@ def train():
     model.learn(int(20_000), callback=checkpoint_callback, tb_log_name="new_dqn", progress_bar=True)
     model.save(model_path)
 
-RECORD_TRAJECTORIES = True
-SAFETY_SHIELD_ENABLE = True
+RECORD_TRAJECTORIES = False
+SAFETY_SHIELD_ENABLE = False
 trajectory_file_name = "trajectories.yaml"
 
 if SAFETY_SHIELD_ENABLE:
@@ -77,7 +77,7 @@ def test():
         "features": ["presence", "x", "y", "vx", "vy", "heading"],
     }
     env_config["simulation_frequency"] = 15
-    env.configure(env_config)
+    env.unwrapped.configure(env_config)
     env.reset()
 
     env.training = False  # Disable normalization updates
@@ -103,7 +103,7 @@ def test():
     env.close()
 
 if __name__ == "__main__":
-    to_train = False
+    to_train = True
     if to_train:
         train()
 

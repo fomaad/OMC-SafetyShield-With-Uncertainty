@@ -2,10 +2,7 @@ import os
 
 import gymnasium as gym
 import maude
-import numpy as np
 from stable_baselines3 import PPO
-from stable_baselines3.common.env_util import make_vec_env
-from stable_baselines3.common.vec_env import SubprocVecEnv
 
 import highway_env
 from highway_env.envs.common.abstract import AbstractEnv
@@ -13,11 +10,11 @@ from highway_env.road.lane import AbstractLane
 import utils
 
 model_dir = "RL-model/merging/ppo"
-model_path = os.path.join(model_dir, "model")
+model_path = os.path.join(model_dir, "model-lighter-pen-lc")
 log_path = os.path.join(model_dir, "log")
 
 env_config = {
-    "lane_change_reward": -0.2,
+    "lane_change_reward": -0.1,
     "right_lane_reward": 0.11,
 }
 def train():
@@ -25,7 +22,7 @@ def train():
     batch_size = 128
 
     # Create and configure the environment
-    env = make_vec_env("merge-v0", n_envs=n_cpu, vec_env_cls=SubprocVecEnv, env_kwargs={"config": env_config})
+    env = gym.make("merge-v0", render_mode='human', config=env_config)
 
     model = PPO(
         "MlpPolicy",
